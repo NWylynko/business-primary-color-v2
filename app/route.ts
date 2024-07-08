@@ -1,6 +1,4 @@
-export const config = {
-  runtime: 'edge',
-};
+export const runtime = "edge"
 
 export const GET = async (request: Request): Promise<Response> => {
   const url = new URL(request.url)
@@ -21,26 +19,45 @@ export const GET = async (request: Request): Promise<Response> => {
   return new Response(hex, {
     headers: {
       "Content-Type": "text/plain",
-      "Content-Cache": "max-age=3600, stale-while-revalidate=86400, stale-if-error=604800",
+      "Content-Cache": "max-age=3600, stale-while-revalidate=86400, stale-if-error=604800, immutable",
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "GET",
+      "Access-Control-Allow-Headers": "Content-Type",
+      "Access-Control-Max-Age": "86400",
+    },
+  })
+}
+
+export const OPTIONS = (request: Request): Response => {
+  return new Response(null, {
+    headers: {
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "GET",
+      "Access-Control-Allow-Headers": "Content-Type",
+      "Access-Control-Max-Age": "86400",
     },
   })
 }
 
 const loadData = async () => {
-  console.time("Fetching data")
-
   const response = await fetch(
     "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/_data/simple-icons.json",
     {
       method: "GET",
-      cache: "force-cache", // hopefully this will be cached by the edge
+      // cache: "force-cache",
+      next: { revalidate: 86400 }, // Cache for 24 hours
       headers: {
         "Content-Type": "application/json",
       },
     }
   )
 
-  console.timeEnd("Fetching data")
+  type Icon = {
+    title: string;
+    hex: string;
+    source: string;
+    guidelines: string;
+  }
 
   const data = await response.json() as { icons: Icon[] }
 
@@ -50,9 +67,4 @@ const loadData = async () => {
   }, {} as Record<string, string>)
 }
 
-type Icon = {
-  title: string;
-  hex: string;
-  source: string;
-  guidelines: string;
-}
+
