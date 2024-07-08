@@ -33,7 +33,7 @@ const loadData = async () => {
     "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/_data/simple-icons.json",
     {
       method: "GET",
-      cache: "force-cache",
+      cache: "force-cache", // hopefully this will be cached by the edge
       headers: {
         "Content-Type": "application/json",
       },
