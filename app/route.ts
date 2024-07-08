@@ -19,7 +19,7 @@ export const GET = async (request: Request): Promise<Response> => {
   return new Response(hex, {
     headers: {
       "Content-Type": "text/plain",
-      "Content-Cache": "max-age=3600, stale-while-revalidate=86400, stale-if-error=604800, immutable",
+      "Cache-Control": "max-age=3600, stale-while-revalidate=86400, stale-if-error=604800, immutable",
       "Access-Control-Allow-Origin": "*",
       "Access-Control-Allow-Methods": "GET",
       "Access-Control-Allow-Headers": "Content-Type",
